@@ -552,7 +552,7 @@ export const register: Register = on => {
     await $.command.register({
       name: 'skin',
       description: 'Open the skin settings, or /skin <name | list | off>',
-      argumentHint: '[gallery | copy | copy code | name | list | off | calm | pin | unpin | share | rail | tables | shimmer | band | countdown | clip | markdown | quiet | charts | math | commands | shell | highlight | hints | links | fold | icons | prompt]',
+      argumentHint: '[gallery | copy | copy code | name | list | off | calm | pin | unpin | share | rail | tables | shimmer | band | countdown | clip | markdown | quiet | charts | math | commands | shell | highlight | hints | links | fold | icons | prompt | words]',
       immediate: true,
     })
     await $.tool.register({
@@ -799,6 +799,7 @@ reply width: ${lastColumns} columns`
       icons: () =>
         void commit($, { ...state, prefs: { ...prefs, icons: prefs.icons === 'unicode' ? 'ascii' : 'unicode' } }),
       prompt: () => void commit($, { ...state, prefs: { ...prefs, prompt: prefs.prompt === 'left' ? 'right' : 'left' } }),
+      words: () => void commit($, { ...state, prefs: { ...prefs, words: prefs.words === 'skin' ? 'claude' : 'skin' } }),
       edit: slot => void update($, editingAtom, () => slot),
       paint: hex => {
         const made = withSlot(prefs.skin === 'off' ? DEFAULT_PREFS.skin : prefs.skin, custom, editing, hex)
@@ -1082,7 +1083,8 @@ reply width: ${lastColumns} columns`
         : desktopSpinnerRow(look, look.svg, e.props.mode, e.props.message ?? e.props.word)
     }
 
-    const word = pick(active.skin.spinner, e.props.word) ?? e.props.word
+    // words claude keeps Claude Code's own word, whatever the skin says.
+    const word = active.prefs.words === 'claude' ? e.props.word : (pick(active.skin.spinner, e.props.word) ?? e.props.word)
 
     if (!active.prefs.shimmer || e.props.message !== null) {
       return next({ ...e, props: { ...e.props, word } })
@@ -1103,7 +1105,7 @@ reply width: ${lastColumns} columns`
     }
 
     const turns = await read($, turnsAtom)
-    const word = pick(active.skin.done, e.props.word) ?? e.props.word
+    const word = active.prefs.words === 'claude' ? e.props.word : (pick(active.skin.done, e.props.word) ?? e.props.word)
 
     return footerRow(lookOf($.ui.resolve(e), active, e.surface), word, e.props.durationMs, turns[String(e.props.durationMs)])
   })

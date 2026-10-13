@@ -23,6 +23,9 @@ export type Prefs = {
   icons: 'unicode' | 'ascii'
   // Which side the outline around a typed prompt sits on; 'right' matches the desktop app.
   prompt: 'left' | 'right'
+  // Whose words the spinner and the turn footer show: 'claude' keeps Claude Code's own,
+  // whatever the skin says; 'skin' draws the skin's.
+  words: 'claude' | 'skin'
   rail: boolean
   // 'text' keeps the skin but draws tables and code as text the desktop can select.
   tables: 'on' | 'text' | 'off'
